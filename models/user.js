@@ -1,6 +1,10 @@
 require("dotenv/config");
 const { Schema, model } = require("mongoose");
 const { createHmac } = require("crypto");
+const {
+  createTokenForUser,
+  validateToken,
+} = require("../services/authentication");
 
 const UserSchema = new Schema(
   {
@@ -48,21 +52,24 @@ UserSchema.pre("save", function (next) {
   next();
 });
 
-UserSchema.static("matchPassword", async function (email, password) {
-  const user = await this.findOne({ email });
-  // console.log(user);
-  if (!user) throw new Error("invalid email");
-  const salt = user.salt;
-  const hashpassword = user.password;
-  const userProvidePasswordHash = createHmac("sha256", salt)
-    .update(password)
-    .digest("hex");
-  if (userProvidePasswordHash != hashpassword) {
-    throw new Error("invalid password");
+UserSchema.static(
+  "matchPasswordAndGenerateToken",
+  async function (email, password) {
+    const user = await this.findOne({ email });
+    // console.log(user);
+    if (!user) throw new Error("invalid email");
+    const salt = user.salt;
+    const hashpassword = user.password;
+    const userProvidePasswordHash = createHmac("sha256", salt)
+      .update(password)
+      .digest("hex");
+    if (userProvidePasswordHash != hashpassword) {
+      throw new Error("invalid password");
+    }
+    const token = createTokenForUser(user);
+    return token;
   }
-
-  return user;
-});
+);
 
 const UserModel = model("user", UserSchema);
 module.exports = UserModel;
