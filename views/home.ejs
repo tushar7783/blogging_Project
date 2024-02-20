@@ -6,7 +6,20 @@
     <title>Home page</title>
   </head>
   <body>
-    <%- include('partials/nav'); -%> <%= JSON.stringify(user) %>
+    <%- include('partials/nav'); -%>
+    <div class="container mt-4">
+      <% blogs.forEach(blog => { %>
+      <div class="card" style="width: 18rem">
+        <img src="<%= blog.coverImageUrl %>" class="card-img-top" />
+        <div class="card-body">
+          <h5 class="card-title"><%= blog.title %></h5>
+          <p class="card-text"><%= blog.body %></p>
+          <a href="#" class="btn btn-primary">View </a>
+        </div>
+      </div>
+
+      <% }) %>
+    </div>
     <%-include('partials/scripts'); -%>
   </body>
 </html>
