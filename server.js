@@ -24,6 +24,7 @@ mongoose
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.resolve("./public"))); //it is used to serve it as static photos basically it is a middleware
+// app.use(express.static(path.resolve("./public"))); //it is used to serve it as static photos basically it is a middleware
 
 app.use(cookieParser());
 app.use(checkForAuthenticationOfToken("token"));
